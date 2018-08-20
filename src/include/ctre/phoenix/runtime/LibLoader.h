@@ -132,6 +132,7 @@ namespace ctre {
 } // ctre
 #else
 #include <dlfcn.h>
+#include <iostream>
 
 namespace ctre {
 	namespace phoenix {
