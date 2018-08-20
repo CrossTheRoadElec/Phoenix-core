@@ -56,7 +56,7 @@ namespace ctre {
 namespace phoenix {
 namespace platform {
 
-    enum DeviceType {TalonSRX, VictorSPX, CANifier, PigeonIMU};
+    enum DeviceType {TalonSRXType, VictorSPXType, CANifierType, PigeonIMUType};
 
 	/**
 	 * @param timeUs	How long to yield current thread in microseconds (us).  
@@ -81,6 +81,8 @@ namespace platform {
     
     int32_t SimConfigSet(DeviceType type, uint32_t param, uint32_t value, uint32_t subValue, uint32_t ordinal, uint32_t id);
 
+	int32_t SimDestroy(DeviceType type, int id);
+	int32_t SimDestroyAll();
 } // namespace platform
 } // namespace phoenix
 } // namespace ctre

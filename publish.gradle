@@ -10,13 +10,7 @@ if (!hasProperty('releaseType')) {
 
 ext.licenseFile = files("$rootDir/LICENSE.txt")
 
-def pubVersion = ''
-if(ext.hasProperty("coreVersion")){
-    pubVersion = ext.coreVersion
-}
-else{
-    pubVersion = WPILibVersion.version
-}
+def pubVersion = '1.0.0'
 
 def outputsFolder = file("$buildDir/allOutputs")
 
@@ -66,10 +60,10 @@ task cppHeadersZip(type: Zip) {
     from(licenseFile) {
         into '/'
     }
-
     from('src/include') {
         into '/'
     }
+
 }
 
 build.dependsOn cppHeadersZip
@@ -77,11 +71,23 @@ addTaskToCopyAllOutputs(cppHeadersZip)
 
 model {
     publishing {
+        def coreTaskList = createComponentZipTasks($.components, 'FakeLibForPublish', zipBaseName, Zip, project, includeStandardZipFormat)
+        def allTask
+        if (!project.hasProperty('jenkinsBuild')) {
+            allTask = createAllCombined(coreTaskList, 'FakeLibForPublish', zipBaseName, Zip, project)
+        }
 
         publications {
             cpp(MavenPublication) {
+                coreTaskList.each {
+                    artifact it
+                }
+                if (!project.hasProperty('jenkinsBuild')) {
+                    artifact allTask
+                }
+                
                 artifact cppHeadersZip
-
+                
                 artifactId = baseArtifactId
                 groupId artifactGroupId
                 version pubVersion

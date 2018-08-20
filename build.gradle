@@ -2,14 +2,40 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
   id 'cpp'
+  id 'edu.wpi.first.NativeUtils' version '1.7.0'
   id 'edu.wpi.first.wpilib.versioning.WPILibVersioningPlugin' version '2.1'
-  id 'google-test-test-suite'
-  id 'com.dorongold.task-tree' version '1.3'
 }
 
+apply from: 'config.gradle'
+
+model {
+  exportsConfigs {
+      CTRE_PhoenixCanutils(ExportsConfig) {
+          x86ExcludeSymbols = ['_CT??_R0?AV_System_error', '_CT??_R0?AVexception', '_CT??_R0?AVfailure',
+                                '_CT??_R0?AVbad_cast',
+                                '_CT??_R0?AVruntime_error', '_CT??_R0?AVsystem_error', '_CTA5?AVfailure',
+                                '_TI5?AVfailure']
+          x64ExcludeSymbols = ['_CT??_R0?AV_System_error', '_CT??_R0?AVexception', '_CT??_R0?AVfailure',
+                                '_CT??_R0?AVbad_cast',
+                                '_CT??_R0?AVruntime_error', '_CT??_R0?AVsystem_error', '_CTA5?AVfailure',
+                                '_TI5?AVfailure']
+      }
+  }
+  components {
+    FakeLibForPublish(NativeLibrarySpec) {
+      sources {
+        cpp {
+          source {
+            srcDirs 'blank'
+            include '**/*.cpp'
+          }
+        }
+      }
+    }
+  }
+}
 
 apply from: 'publish.gradle'
-
 
 wrapper {
   gradleVersion = '4.9'
