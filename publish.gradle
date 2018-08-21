@@ -10,7 +10,13 @@ if (!hasProperty('releaseType')) {
 
 ext.licenseFile = files("$rootDir/LICENSE.txt")
 
-def pubVersion = '1.0.0'
+def pubVersion = ''
+if(ext.hasProperty("coreVersion")){
+    pubVersion = ext.coreVersion
+}
+else{
+    pubVersion = WPILibVersion.version
+}
 
 def outputsFolder = file("$buildDir/allOutputs")
 
