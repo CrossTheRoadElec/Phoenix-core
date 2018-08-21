@@ -78,6 +78,12 @@ namespace ctre {
 					/* throw if it didn't load */
 					if (_handle == NULL) { throw LibLoaderException("Could not load", _libPath); }
 				}
+				/**
+				 * @return true if DLL/SO is loaded.
+				 */
+				bool IsOpen() const {
+					return (_handle != NULL);
+				}
 
 				/**
 				* Close DLL and clear func ptrs.
@@ -188,6 +194,12 @@ namespace ctre {
                         std::cout << baseErr << _libPath << std::endl; 
                         throw; //LibLoaderException(baseErr, _libPath); 
                     }
+				}
+				/**
+				* @return true if DLL/SO is loaded.
+				*/
+				bool IsOpen() const{
+					return (_handle != NULL);
 				}
 				
                 /**

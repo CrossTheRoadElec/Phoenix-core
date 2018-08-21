@@ -29,7 +29,7 @@
 #endif
 
 /**
- * CTR_ASSERT(cond)
+ * CTRE_ASSERT(cond)
  * This can be moved into a seperate header later (Platform-assert).
  */
 #if defined(__GNUC__)
@@ -46,4 +46,44 @@
 	#endif
 #else
 	#define CTRE_ASSERT(cond)	do{}while(0)
+#endif
+
+/**
+* CTRE_Application_CrashHandler(cond)
+* This can be moved into a seperate header later.
+*/
+#if defined(WIN32) || defined(_WIN32) || defined(_WIN64)
+	#define CTRE_IMPLEMENT_SHUTDOWN_HANDLER(shutdown_handler)													\
+											static void shutdown_handler();										\
+											BOOL WINAPI CTRE_Global_ConsoleHandlerRoutine(DWORD dwCtrlType) {	\
+												if (dwCtrlType == CTRL_CLOSE_EVENT) { shutdown_handler(); }		\
+												return FALSE;													\
+											}																	\
+											static void shutdown_handler()
+
+
+	#define CTRE_REGISTER_SHUTDOWN_HANDLER(shutdown_handler) \
+		do{ (void)SetConsoleCtrlHandler(CTRE_Global_ConsoleHandlerRoutine, TRUE); } while(0)
+
+#elif defined(__GNUC__)
+
+	#include <sys/signal.h>		
+
+	#define CTRE_IMPLEMENT_SHUTDOWN_HANDLER(shutdown_handler)	\
+		static void shutdown_handler(int signo)	
+
+	#define CTRE_REGISTER_SHUTDOWN_HANDLER(shutdown_handler) \
+										{	\
+											struct sigaction sigact;	\
+											sigact.sa_handler = shutdown_handler;	\
+											sigemptyset(&sigact.sa_mask);	\
+											sigact.sa_flags = 0;	\
+											sigaction(SIGINT, &sigact, NULL);	\
+											sigaction(SIGTERM, &sigact, NULL);	\
+										}
+#else
+
+	#define CTRE_IMPLEMENT_SHUTDOWN_HANDLER(shutdown_handler) static void shutdown_handler(int signo)	
+	#define CTRE_REGISTER_SHUTDOWN_HANDLER(shutdown_handler)
+
 #endif
