@@ -8,6 +8,8 @@ plugins {
 
 apply from: 'config.gradle'
 
+//This project exists just to provide common headers (at least for now)
+
 model {
   exportsConfigs {
       CTRE_PhoenixCanutils(ExportsConfig) {

@@ -53,7 +53,7 @@ ext.addTaskToCopyAllOutputs = { task ->
     copyAllOutputs.inputs.file task.archivePath
     copyAllOutputs.from task.archivePath
 }
-
+//Publishes to folder with name core under com/ctre/phoenix
 def baseArtifactId = 'core'
 def artifactGroupId = 'com.ctre.phoenix'
 def zipBaseName = '_GROUP_com_ctre_phoenix_ID_core_CLS'
