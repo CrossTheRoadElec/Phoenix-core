@@ -85,6 +85,11 @@ namespace platform {
 	int32_t SimDestroyAll();
 
     int32_t DisposePlatform();
+    int32_t StartPlatform();
+
+    int32_t DisposeMgr();
+    int32_t StartMgr();
+    
 } // namespace platform
 } // namespace phoenix
 } // namespace ctre
