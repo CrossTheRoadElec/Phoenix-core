@@ -12,7 +12,7 @@ apply from: 'config.gradle'
 
 model {
   exportsConfigs {
-      CTRE_PhoenixCanutils(ExportsConfig) {
+      CTRE_PhoenixCore(ExportsConfig) {
           x86ExcludeSymbols = ['_CT??_R0?AV_System_error', '_CT??_R0?AVexception', '_CT??_R0?AVfailure',
                                 '_CT??_R0?AVbad_cast',
                                 '_CT??_R0?AVruntime_error', '_CT??_R0?AVsystem_error', '_CTA5?AVfailure',

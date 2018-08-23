@@ -115,6 +115,9 @@ if (!project.hasProperty('skipAthena')) {
 }
 
 if(!project.hasProperty('onlyAthena')){
+
+if(!project.hasProperty('skipCross')){
+
 //pi/tk1
 if (!project.hasProperty('skipArmhf')) {
     model {
@@ -155,6 +158,7 @@ if (!project.hasProperty('skipAarch64')) {
     }
 }
 
+}// -PskipCross
 
 if (!project.hasProperty('noNative')) {
     model {
