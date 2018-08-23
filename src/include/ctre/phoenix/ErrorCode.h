@@ -69,7 +69,7 @@ enum ErrorCode
 	LibraryCouldNotBeLoaded = -800,
 	MissingRoutineInLibrary = -801,
 	ResourceNotAvailable = -802,
-
+	
 	//CAN Related
 	PulseWidthSensorNotPresent = 10,	//!< Special Code for "isSensorPresent"
 
