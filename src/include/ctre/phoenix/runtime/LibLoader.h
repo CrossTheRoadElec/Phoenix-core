@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include "ctre/phoenix/ErrorCode.h"
 #include <stdexcept>
 #include <string>
 #include <map>
@@ -28,27 +29,42 @@
   */
 #define LIBLOADER_LOOKUP(libloader, funcT) (libloader).LookupFunc<funcT>(#funcT)
 
-#if defined(WIN32) || defined(_WIN32) || defined(_WIN64)
-#include <Windows.h>
-
 namespace ctre {
 	namespace phoenix {
 		namespace runtime {
 			/**
-			 * LibLoaderException
-			 */
+			* LibLoaderException
+			*/
 			class LibLoaderException : public std::runtime_error {
 			public:
 
-				LibLoaderException(const std::string& BaseMessage, const std::string & libPath)
+				LibLoaderException(phoenix::ErrorCode errorCode, const std::string& BaseMessage, const std::string & libPath)
 					: std::runtime_error((BaseMessage + " " + libPath).c_str())
 				{
+					_errorCode = errorCode;
 				}
-				LibLoaderException(const std::string& BaseMessage, const std::string & libPath, const std::string & funcName)
+				LibLoaderException(phoenix::ErrorCode errorCode, const std::string& BaseMessage, const std::string & libPath, const std::string & funcName)
 					: std::runtime_error((BaseMessage + " " + funcName + " in " + libPath).c_str())
 				{
+					_errorCode = errorCode;
 				}
+
+				phoenix::ErrorCode GetPhoenixErrorCode() const
+				{
+					return _errorCode;
+				}
+			private:
+				phoenix::ErrorCode _errorCode;
 			};
+		} // runtime
+	} // phoenix
+} // ctre
+
+#if defined(WIN32) || defined(_WIN32) || defined(_WIN64)
+#include <Windows.h>
+namespace ctre {
+	namespace phoenix {
+		namespace runtime {
 			/**
 			 * LibLoader
 			 */
@@ -76,7 +92,7 @@ namespace ctre {
 					/* attempt to load the module (dll) */
 					_handle = LoadLibraryA(_libPath.c_str());
 					/* throw if it didn't load */
-					if (_handle == NULL) { throw LibLoaderException("Could not load", _libPath); }
+					if (_handle == NULL) { throw LibLoaderException(ErrorCode::LibraryCouldNotBeLoaded, "Could not load", _libPath); }
 				}
                 /**
                 * @return true if DLL/SO is loaded.
@@ -107,7 +123,7 @@ namespace ctre {
 				template<typename T> T LookupFunc(const std::string & funcName)
 				{
 					/* make sure Open was called successfully */
-					if (_handle == NULL) { throw LibLoaderException("Could not load", _libPath); }
+					if (_handle == NULL) { throw LibLoaderException(ErrorCode::LibraryCouldNotBeLoaded, "Could not load", _libPath); }
 
 					/* first check map, we might have it already */
 					auto iter = _mp.find(funcName);
@@ -119,7 +135,7 @@ namespace ctre {
 					/* did we get it? */
 					if (funcPtr == NULL) {
 						/* couldn't find it dll, throw to caller */
-						throw LibLoaderException("Could not find routine", _libPath, funcName);
+						throw LibLoaderException(ErrorCode::MissingRoutineInLibrary, "Could not find routine", _libPath, funcName);
 					}
 					/* insert into coll */
 					_mp[funcName] = (void*)funcPtr;
@@ -143,21 +159,6 @@ namespace ctre {
 namespace ctre {
 	namespace phoenix {
 		namespace runtime {
-			/**
-			 * LibLoaderException
-			 */
-			class LibLoaderException : public std::runtime_error {
-			public:
-
-				LibLoaderException(const std::string& BaseMessage, const std::string & libPath)
-					: std::runtime_error((BaseMessage + " " + libPath).c_str())
-				{
-				}
-				LibLoaderException(const std::string& BaseMessage, const std::string & libPath, const std::string & funcName)
-					: std::runtime_error((BaseMessage + " " + funcName + " in " + libPath).c_str())
-				{
-				}
-			};
 			/**
 			 * LibLoader
 			 */
@@ -192,7 +193,7 @@ namespace ctre {
                         baseErr +=  " | With path: ";
 
                         std::cout << baseErr << _libPath << std::endl; 
-                        throw; //LibLoaderException(baseErr, _libPath); 
+                        throw; //LibLoaderException(ErrorCode::LibraryCouldNotBeLoaded, baseErr, _libPath); 
                     }
 				}
                 /**
@@ -233,7 +234,7 @@ namespace ctre {
                         baseErr +=  " | With path: ";
 
                         std::cout << baseErr << _libPath << std::endl; 
-                        throw; //LibLoaderException(baseErr, _libPath); 
+                        throw; //LibLoaderException(ErrorCode::LibraryCouldNotBeLoaded,baseErr, _libPath); 
                     }
 
 					/* first check map, we might have it already */
@@ -251,7 +252,7 @@ namespace ctre {
 
                         std::cout << baseErr << funcName << " in " << _libPath << std::endl; 
     
-                        throw;// LibLoaderException("Could not find routine", _libPath, funcName);
+                        throw;// LibLoaderException(ErrorCode::MissingRoutineInLibrary,"Could not find routine", _libPath, funcName);
 					}
 					/* insert into coll */
 					_mp[funcName] = (void*)funcPtr;
