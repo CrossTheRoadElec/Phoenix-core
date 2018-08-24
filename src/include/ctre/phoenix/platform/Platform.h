@@ -28,7 +28,7 @@ namespace can {
 	void CANbus_GetStatus(float *busUtilPerc, uint32_t *busOffCount, uint32_t *txFullCount, uint32_t *rec, uint32_t *tec, int32_t *status);
 	int32_t CANbus_SendFrame(uint32_t messageID, const uint8_t *data, uint8_t dataSize);
 	/* assumed blocking */
-	int32_t CANbus_ReceiveFrame(canframe_t * toFill, uint32_t frameCap, uint32_t &numFilled);
+	int32_t CANbus_ReceiveFrame(canframe_t * toFill, uint32_t frameCap, uint32_t *numFilled);
     
     int32_t SetCANInterface(const char * CANInterface);
 
